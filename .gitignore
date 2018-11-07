@@ -1,0 +1,8 @@
+*.iml
+.idea
+input/api
+output/api
+emmylua-api-cocos2dx.zip
+output/manual/app
+output/manual/cocos
+output/manual/framework
