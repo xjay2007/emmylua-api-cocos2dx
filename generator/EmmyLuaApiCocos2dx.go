@@ -356,6 +356,8 @@ func parseOverload(block string, f *Func) {
 }
 
 func output(f File, tplFileName string, desFileName string) bool {
+	dir := filepath.Dir(desFileName)
+	os.MkdirAll(dir, os.ModePerm)
 	outFile, err := os.Create(desFileName)
 	if err != nil {
 		fmt.Println(err)
