@@ -1,4 +1,4 @@
-基于 [EmmyLua](https://github.com/EmmyLua/IntelliJ-EmmyLua) 插件的 [Cocos2d-x](https://github.com/cocos2d/cocos2d-x) api 库.
+基于 [EmmyLua](https://github.com/EmmyLua/IntelliJ-EmmyLua) 插件的 [Cocos2d-x](https://github.com/cocos2d/cocos2d-x) api 提示库.
 
 
 | 测试环境             |
@@ -11,8 +11,13 @@
 - 基于 Cocos2d-x 中 binding-generator 自动生成的 api 
 - 大部分 api 提示
 -  `cc` , `ccui` , `ccexp` , `ccs` 等全局变量下的字段提示
+- 使用示例
 
 ![](res/instruction.gif)
+
+- api 示例
+
+  ![](res/sample_node.png)
 
 ## 安装说明
 
