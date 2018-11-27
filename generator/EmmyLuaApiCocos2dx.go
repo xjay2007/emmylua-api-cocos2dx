@@ -10,24 +10,33 @@ import (
 	"time"
 )
 
-
+// 参数类型
 type Type struct {
 	Types []string // {number,any,void}
 	Desc string // number|any|void
 }
 
+// 参数
 type Param struct {
 	Name string
 	Type Type
 	Comment string
 }
 
+// 字段
 type Field struct {
 	Name string
 	Type Type
 	Comment string
 }
 
+// 重载
+type Overload struct {
+	Params []Param
+	Return Type
+}
+
+// 方法
 type Func struct {
 	Name string
 	Comments []string
@@ -35,8 +44,10 @@ type Func struct {
 	Params []Param
 	Return Type
 	ParamNames []string
+	Overloads []Overload
 }
 
+// 模块
 type Module struct {
 	Module string
 	Extends []string
@@ -44,6 +55,7 @@ type Module struct {
 	Desc string
 }
 
+// 文件
 type File struct {
 	Name   string
 	Module Module
@@ -70,6 +82,31 @@ func (t *Type) GetDesc() string {
 		list[key] = convertType(value)
 	}
 	return strings.Join(list, "|")
+}
+
+func (t *Type) IsSame(other Type) bool {
+	compareFun := func(a []string, b []string) bool {
+		same := true
+		for _, value := range a {
+			found := false
+			for _, value2 := range b {
+				if value == value2 {
+					found = true
+				}
+			}
+			if !found {
+				same = false
+			}
+		}
+		return same
+	}
+	if ! compareFun(t.Types, other.Types) {
+		return false
+	}
+	if ! compareFun(other.Types, t.Types) {
+		return false
+	}
+	return true
 }
 
 func (f *File) IsField() bool {
@@ -104,9 +141,42 @@ func (m *Module) GetDesc() string {
 	return fmt.Sprintf("%s%s%s", parentModule, module, extends)
 }
 
+func (m *Module) GetName() string {
+	module := m.Module
+	parentModule := m.ParentModule
+	if len(parentModule) == 0 {
+		parentModule = ""
+	}else {
+		parentModule = parentModule + "."
+	}
+	return parentModule + module
+}
+
+func (ol *Overload) GetDesc() string {
+	paramStringList := make([]string, len(ol.Params))
+	for i, param := range ol.Params {
+		paramStringList[i] = param.Name + ":" + param.Type.GetDesc()
+	}
+	ret := "fun(" + strings.Join(paramStringList, ", ") + ")"
+	retDesc := ol.Return.GetDesc()
+	if retDesc != "" {
+		ret = ret + ":" + retDesc
+	}
+	return ret
+}
+
 func main() {
 
 	start := time.Now()
+
+	walkDir()
+	//walkFile()
+
+	fmt.Println("use time ", time.Now().Sub(start))
+}
+
+// 处理整个文件夹
+func walkDir() {
 
 	fileMap := map[string]File{}
 	filepath.Walk("input/api", func(path string, info os.FileInfo, err error) error {
@@ -152,7 +222,24 @@ func main() {
 			}
 		}
 	}
-	fmt.Println("use time ", time.Now().Sub(start))
+}
+
+// 处理单个文件 测试用
+func walkFile() {
+	path := "input/api/Node.lua"
+
+	file, err := processFile(path)
+	if err != nil {
+		return
+	}
+	fmt.Println(file.Funcs[1].Overloads)
+	outputFileName := file.Name
+	ret := output(file, "template.tpl", "output/api/" + outputFileName)
+	if ret {
+		fmt.Println(outputFileName, "process completed")
+	} else {
+		fmt.Println(outputFileName, "process failed")
+	}
 }
 
 func processFile(path string) (File, error) {
@@ -182,7 +269,7 @@ func parse(srcFileName string) (File, error) {
 	for index, value := range matchList {
 		block := value[1]
 		parseBlock(block, &file)
-		if index >= 4 {
+		if index > 4 {
 			//break
 		}
 	}
@@ -303,7 +390,7 @@ func parseFunc(block string, file *File) {
 	re, _ = regexp.Compile(`-- @overload (.*?)\n`)
 	matchListList = re.FindAllStringSubmatch(block, -1)
 	for _, list := range matchListList {
-		parseOverload(list[1], &f)
+		parseOverload(list[1], &f, file)
 	}
 
 	file.Funcs = append(file.Funcs, f)
@@ -336,22 +423,55 @@ func parseParam(block string, f *Func) {
 	f.ParamNames = append(f.ParamNames, p.Name)
 }
 
-func parseOverload(block string, f *Func) {
-	strList := strings.Split(block, ",")
-	hasSelf := false
-	for i, value := range strList {
-		paramType := convertType(trim(value))
+func parseOverload(block string, f *Func, file *File) {
+	ol := Overload{}
+	ol.Return = f.Return
 
+	strList := strings.Split(block, ",")
+	hasSelf := f.MethodType == ":"
+	// 解析出Overload 参数列表
+	for i, value := range strList {
+		newParam := Param{}
+		paramType := convertType(trim(value))
+		newType := Type{}
 		if i == 0 && paramType == "self" {
 			hasSelf = true
-			continue
+			newParam.Name = "self"
+			newType.AddType(file.Module.GetName())
+		} else {
+			index := i
+			if hasSelf {
+				index = i - 1
+			}
+			paramName := f.Params[index].Name
+			newParam.Name = paramName
+			newType.AddType(paramType)
 		}
-		pIndex := i
+		newParam.Type = newType
+		ol.Params = append(ol.Params, newParam)
+	}
+
+	countParam := len(ol.Params)
+	isOriginalFunc := true
+	// 比较是不是 原本的参数
+	for i, oldParam := range f.Params {
+		index := i
 		if hasSelf {
-			pIndex = i - 1
+			index = index + 1
 		}
-		param := &f.Params[pIndex]
-		param.Type.AddType(paramType)
+		if index >= countParam {
+			isOriginalFunc = false
+			break
+		}
+		olParamType := ol.Params[index].Type
+		if !oldParam.Type.IsSame(olParamType) {
+			isOriginalFunc = false
+			break
+		}
+	}
+
+	if !isOriginalFunc {
+		f.Overloads = append(f.Overloads, ol)
 	}
 }
 
@@ -363,7 +483,6 @@ func output(f File, tplFileName string, desFileName string) bool {
 		fmt.Println(err)
 		return false
 	}
-
 
 	tpl := template.New("text")
 
@@ -430,8 +549,14 @@ func convertType(oldType string) string {
 		return "cc.vec3"
 	case "color3b_table":
 		return "cc.c3b"
+	case "color4b_table":
+		return "cc.c4b"
+	case "color4f_table":
+		return "cc.c4f"
 	case "array_table":
 		return "any[]"
+	case "map_table":
+		return "table<any:any>"
 	case "function":
 		return "fun"
 	default:

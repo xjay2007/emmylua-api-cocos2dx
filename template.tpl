@@ -6,6 +6,7 @@
 local m = {}
 
 {{range .Funcs}}{{range $i, $comment := .Comments}}--- {{$comment}}
+{{end}}{{range .Overloads}}---@overload {{.GetDesc}}
 {{end}}{{range .Params}}---@param {{.Name}} {{.Type.GetDesc}}{{if .Comment}} @{{.Comment}}{{end}}
 {{end}}{{if .Return}}---@return {{.Return.GetDesc}}
 {{end}}function m{{.MethodType}}{{.Name}}({{stringJoin .ParamNames ", "}}) end
