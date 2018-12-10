@@ -73,5 +73,8 @@ cc.Native = {}
 ---@type cc.HTTPRequest
 cc.HTTPRequest = {}
 
+---@type cc.Network
+cc.Network = {}
+
 ---@type tolua
 local tolua = tolua
