@@ -46,6 +46,10 @@
 ---@field b float
 ---@field a float
 
+---@class cc.BlendFunc
+---@field src uint
+---@field dst uint
+
 ---@type cc
 local cc = cc
 ---@type ccui
@@ -56,3 +60,18 @@ local ccexp = ccexp
 local sp = sp
 ---@type ccs
 local ccs = ccs
+
+---@type cc.XMLHttpRequest
+cc.XMLHttpRequest = {}
+
+---@type cc.Crypto
+cc.Crypto = {}
+
+---@type cc.Native
+cc.Native = {}
+
+---@type cc.HTTPRequest
+cc.HTTPRequest = {}
+
+---@type tolua
+local tolua = tolua

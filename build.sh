@@ -7,6 +7,6 @@ go run generator/EmmyLuaApiCocos2dx.go
 echo "generate done"
 cd ./output/
 rm -f ./emmylua-api-cocos2dx.zip
-zip -r -X ./emmylua-api-cocos2dx.zip ./api ./manual/*.lua
+zip -r -X ./emmylua-api-cocos2dx.zip ./api ./manual/ ./external ./quick
 cd ../
 echo "zip done"
