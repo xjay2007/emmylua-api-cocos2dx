@@ -6,7 +6,7 @@ cd $path
 go run generator/EmmyLuaApiCocos2dx.go
 echo "generate done"
 cd ./output/
-rm -f ./emmylua-api-cocos2dx.zip
-zip -r -X ./emmylua-api-cocos2dx.zip ./api ./manual/ ./external ./quick
+rm -f ../release/emmylua-api-cocos2dx.zip
+zip -r -X ../release/emmylua-api-cocos2dx.zip ./api ./manual/ ./external ./quick
 cd ../
 echo "zip done"
