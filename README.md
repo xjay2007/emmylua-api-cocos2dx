@@ -1,5 +1,8 @@
-基于 [EmmyLua](https://github.com/EmmyLua/IntelliJ-EmmyLua) 插件的 [Cocos2d-x](https://github.com/cocos2d/cocos2d-x) api 提示库.
+---
+title: 基于 EmmyLua 插件的 Cocos2d-x API 提示库
+---
 
+基于 [EmmyLua](https://github.com/EmmyLua/IntelliJ-EmmyLua) 插件的 [Cocos2d-x](https://github.com/cocos2d/cocos2d-x) API 提示库。
 
 | 测试环境             |
 | -------------------- |
@@ -8,16 +11,16 @@
 
 ## 特性
 
-- 基于 Cocos2d-x 中 binding-generator 自动生成的 api 
-- 大部分 api 提示
--  `cc` , `ccui` , `ccexp` , `ccs` 等全局变量下的字段提示
-- 使用示例
+- 基于 Cocos2d-x 中 binding-generator 自动生成的 API。
+- 大部分 API 提示
+- `cc` , `ccui` , `ccexp` , `ccs` 等全局变量下的字段提示。
+- 使用示例：
 
-![](res/instruction.gif)
+![instruction](res/instruction.gif)
 
-- api 示例
+- API 示例：
 
-  ![](res/sample_node.png)
+  ![sample_node](res/sample_node.png)
 
 ## 安装说明
 
@@ -25,27 +28,25 @@
 
 - 下载 [最新Release](https://github.com/xjay2007/emmylua-api-cocos2dx/releases) zip文件
 
-  ![](res/step_download_zip.png)
+  ![step_download_zip](res/step_download_zip.png)
 
 - 打开 File -> Project Structure...
 
-  ![step_1](res/step_open_structure.png)
+  ![step_open_structure](res/step_open_structure.png)
 
--  Project Settings -> Libraries -> + -> Lua Zip Library 
+- Project Settings -> Libraries -> + -> Lua Zip Library 
 
-![](res/step_add_library.png)
+  ![step_add_library](res/step_add_library.png)
 
 - 选择下载好的zip文件，添加到当前工程
 
-  ![](res/step_select_zip.png)
+  ![step_select_zip](res/step_select_zip.png)
 
-- 在 Project 栏可看到 External Libraries 
+- 在 Project 栏可看到 External Libraries
 
-  ![](res/step_add_success.png)
-
-
+  ![step_add_success](res/step_add_success.png)
 
 ## TODO
 
 - ~~添加 `---@overload` 注解~~ v0.0.2添加
-- 添加手动的api
+- 添加手动的 API
