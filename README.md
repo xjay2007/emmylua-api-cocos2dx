@@ -1,6 +1,5 @@
----
-title: 基于 EmmyLua 插件的 Cocos2d-x API 提示库
----
+
+# 基于 EmmyLua 插件的 Cocos2d-x API 提示库
 
 基于 [EmmyLua](https://github.com/EmmyLua/IntelliJ-EmmyLua) 插件的 [Cocos2d-x](https://github.com/cocos2d/cocos2d-x) API 提示库。
 
